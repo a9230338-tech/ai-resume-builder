@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>AI Resume Builder </title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+<h1> Resume Builder</h1>
+</header>
+
+<div class="main-container">
+
+<!-- LEFT PANEL -->
+
+<div class="form-panel">
+
+<h2>Your Details</h2>
+
+<input id="name" placeholder="Full Name">
+
+<input id="job" placeholder="Job Title">
+
+<textarea id="skills" placeholder="Skills"></textarea>
+
+<textarea id="education" placeholder="Education"></textarea>
+
+<textarea id="experience" placeholder="Experience"></textarea>
+
+<label>Profile Photo</label>
+<input type="file" id="photo" accept="image/*">
+
+<label>Choose Template</label>
+
+<select id="template">
+<option value="template1">Modern</option>
+<option value="template2">Minimal</option>
+<option value="template3">Professional</option>
+</select>
+
+<button onclick="generateResume()">Generate Resume</button>
+
+<button onclick="downloadPDF()">Download PDF</button>
+
+</div>
+
+
+<!-- RESUME PREVIEW -->
+
+<div class="preview-panel">
+
+<div id="resumePreview" class="template1">
+
+<img id="profileImage" class="profile">
+
+<h1 id="pname">Your Name</h1>
+
+<p id="pjob">Job Title</p>
+
+<h3>Skills</h3>
+<p id="pskills"></p>
+
+<h3>Education</h3>
+<p id="peducation"></p>
+
+<h3>Experience</h3>
+<p id="pexperience"></p>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>AI Resume Builder</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f5f6fa;
+margin:0;
+padding:0;
+}
+
+header{
+background:#2f3640;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.container{
+display:flex;
+gap:40px;
+padding:40px;
+}
+
+.form-section{
+width:40%;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.preview-section{
+width:60%;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+background:#4078ff;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#305fcc;
+}
+
+#resumePreview{
+white-space:pre-line;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>AI Resume Builder</h1>
+<p>Create professional resumes in seconds</p>
+</header>
+
+<div class="container">
+
+<div class="form-section">
+
+<h2>Enter Your Details</h2>
+
+<input id="name" placeholder="Full Name">
+
+<input id="job" placeholder="Target Job">
+
+<textarea id="skills" placeholder="Skills"></textarea>
+
+<textarea id="education" placeholder="Education"></textarea>
+
+<textarea id="experience" placeholder="Experience"></textarea>
+
+<button onclick="generateResume()">Generate Resume</button>
+
+</div>
+
+<div class="preview-section">
+
+<h2>Resume Preview</h2>
+
+<div id="resumePreview">
+Your resume will appear here...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function generateResume(){
+
+const data={
+name:document.getElementById("name").value,
+skills:document.getElementById("skills").value,
+education:document.getElementById("education").value,
+experience:document.getElementById("experience").value,
+job:document.getElementById("job").value
+}
+
+const res=await fetch("http://localhost:3000/generate-resume",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(data)
+
+})
+
+const result=await res.json()
+
+document.getElementById("resumePreview").innerText=result.resume
+
+}
+
+</script>
+
+</body>
+
+</html>
