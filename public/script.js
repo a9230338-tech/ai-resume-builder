@@ -1,65 +1,36 @@
 async function generateResume(){
 
-const name=document.getElementById("name").value
-const job=document.getElementById("job").value
-const skills=document.getElementById("skills").value
-const education=document.getElementById("education").value
-const experience=document.getElementById("experience").value
+const formData = new FormData()
 
-document.getElementById("pname").innerText=name
-document.getElementById("pjob").innerText=job
-document.getElementById("pskills").innerText=skills
-document.getElementById("peducation").innerText=education
-document.getElementById("pexperience").innerText=experience
+formData.append("name",document.getElementById("name").value)
+formData.append("job",document.getElementById("job").value)
+formData.append("skills",document.getElementById("skills").value)
+formData.append("education",document.getElementById("education").value)
+formData.append("experience",document.getElementById("experience").value)
 
-const template=document.getElementById("template").value
+const photoFile=document.getElementById("photo").files[0]
 
-const preview=document.getElementById("resumePreview")
-
-preview.className=template
-
-// profile photo
-
-const file=document.getElementById("photo").files[0]
-
-if(file){
-
-const reader=new FileReader()
-
-reader.onload=function(e){
-
-document.getElementById("profileImage").src=e.target.result
-
+if(photoFile){
+formData.append("photo",photoFile)
+document.getElementById("profileImage").src=URL.createObjectURL(photoFile)
 }
 
-reader.readAsDataURL(file)
-
-}
-
-const data={
-name:name,
-job:job,
-skills:skills,
-education:education,
-experience:experience
-}
-
-await fetch("/generate-resume",{
-
+const res = await fetch("/generate-resume",{
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify(data)
-
+body:formData
 })
 
+const data = await res.json()
+
+document.getElementById("pname").innerText=document.getElementById("name").value
+document.getElementById("pjob").innerText=document.getElementById("job").value
+document.getElementById("pskills").innerText=document.getElementById("skills").value
+document.getElementById("peducation").innerText=document.getElementById("education").value
+document.getElementById("pexperience").innerText=document.getElementById("experience").value
+
 }
 
+// download pdf
 function downloadPDF(){
-
-window.open("/resume.pdf","_blank")
-
+window.open("/resume.pdf")
 }

@@ -12,52 +12,48 @@ const stream = fs.createWriteStream(filePath)
 
 doc.pipe(stream)
 
-// Name
+// PHOTO
+if(data.photo){
+doc.image(data.photo, 450, 50, {
+width:100,
+height:100
+})
+}
+
+// NAME
 doc
 .fontSize(24)
-.text(data.name, {align:"center"})
+.text(data.name,{align:"center"})
 .moveDown()
 
-// Job Title
+// JOB
 doc
 .fontSize(14)
 .text(data.job,{align:"center"})
 .moveDown(2)
 
-// Skills
-doc
-.fontSize(16)
-.text("Skills",{underline:true})
-.moveDown(0.5)
+// SKILLS
+doc.fontSize(16).text("Skills",{underline:true})
+doc.moveDown(0.5)
 
-doc
-.fontSize(12)
-.text(data.skills)
-.moveDown()
+doc.fontSize(12).text(data.skills)
+doc.moveDown()
 
-// Education
-doc
-.fontSize(16)
-.text("Education",{underline:true})
-.moveDown(0.5)
+// EDUCATION
+doc.fontSize(16).text("Education",{underline:true})
+doc.moveDown(0.5)
 
-doc
-.fontSize(12)
-.text(data.education)
-.moveDown()
+doc.fontSize(12).text(data.education)
+doc.moveDown()
 
-// Experience
-doc
-.fontSize(16)
-.text("Experience",{underline:true})
-.moveDown(0.5)
+// EXPERIENCE
+doc.fontSize(16).text("Experience",{underline:true})
+doc.moveDown(0.5)
 
-doc
-.fontSize(12)
-.text(data.experience)
+doc.fontSize(12).text(data.experience)
 
 doc.end()
 
 }
 
-module.exports = createPDF
+module.exports=createPDF
