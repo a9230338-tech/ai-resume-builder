@@ -2,7 +2,9 @@ const OpenAI = require("openai");
 
 let openai;
 try {
-  openai = new OpenAI({ apiKey: "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" });
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
 } catch (e) {
   console.log("OpenAI initialization failed, relying on simulated AI fallback.");
 }
