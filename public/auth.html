@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AI Resume Builder</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+    .auth-panel {
+      width: 400px;
+      text-align: center;
+    }
+    .toggle-links {
+      margin-top: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.95rem;
+    }
+    .toggle-links:hover {
+      color: #fff;
+    }
+    .error-msg {
+      color: #ef4444;
+      margin-bottom: 15px;
+      display: none;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Resume Builder</h1>
+    <p>Your journey to a perfect professional story begins here.</p>
+  </header>
+
+  <div class="auth-container">
+    <div class="form-panel auth-panel" id="loginForm">
+      <h2>Welcome Back</h2>
+      <div class="error-msg" id="loginError"></div>
+      
+      <input type="text" id="l-username" placeholder="Username">
+      <input type="password" id="l-password" placeholder="Password">
+      
+      <button onclick="login()">Sign In</button>
+      <p class="toggle-links" onclick="toggleForm()">Don't have an account? Sign Up</p>
+    </div>
+
+    <div class="form-panel auth-panel" id="signupForm" style="display: none;">
+      <h2>Create VIP Account</h2>
+      <div class="error-msg" id="signupError"></div>
+      
+      <input type="text" id="s-username" placeholder="Choose a Username">
+      <input type="password" id="s-password" placeholder="Choose a Password">
+      
+      <button onclick="register()">Create Account</button>
+      <p class="toggle-links" onclick="toggleForm()">Already have an account? Sign In</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleForm() {
+      const login = document.getElementById("loginForm");
+      const signup = document.getElementById("signupForm");
+      if (login.style.display === "none") {
+        login.style.display = "block";
+        signup.style.display = "none";
+      } else {
+        login.style.display = "none";
+        signup.style.display = "block";
+      }
+    }
+
+    async function login() {
+      const u = document.getElementById("l-username").value;
+      const p = document.getElementById("l-password").value;
+      const err = document.getElementById("loginError");
+      const btn = document.querySelector("#loginForm button");
+      
+      btn.innerText = "Signing in...";
+      try {
+        const res = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("username", data.user.username);
+          window.location.href = "/";
+        } else {
+          err.innerText = data.error;
+          err.style.display = "block";
+          btn.innerText = "Sign In";
+        }
+      } catch (e) {
+        err.innerText = "Network Error";
+        err.style.display = "block";
+        btn.innerText = "Sign In";
+      }
+    }
+
+    async function register() {
+      const u = document.getElementById("s-username").value;
+      const p = document.getElementById("s-password").value;
+      const err = document.getElementById("signupError");
+      const btn = document.querySelector("#signupForm button");
+      
+      btn.innerText = "Creating...";
+      try {
+        const res = await fetch("/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          alert("Account created successfully! Please sign in.");
+          toggleForm();
+          btn.innerText = "Create Account";
+        } else {
+          err.innerText = data.error;
+          err.style.display = "block";
+          btn.innerText = "Create Account";
+        }
+      } catch (e) {
+        err.innerText = "Network Error";
+        err.style.display = "block";
+        btn.innerText = "Create Account";
+      }
+    }
+  </script>
+</body>
+</html>

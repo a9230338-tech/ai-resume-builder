@@ -1,85 +1,162 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>AI Resume Builder </title>
-
-<link rel="stylesheet" href="style.css">
-
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "auth.html";
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium AI Resume Builder</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Use Phosphor Icons or similar for buttons later if wanted, omit for now -->
 </head>
-
 <body>
 
-<header>
-<h1> Resume Builder</h1>
-</header>
+  <header>
+    <h1>Resume Builder</h1>
+    <p>Craft your perfect professional story with our VIP study tools.</p>
+  </header>
 
-<div class="main-container">
+  <div class="main-container">
+    
+    <!-- LEFT PANEL: FORM -->
+    <div class="form-panel">
+      
+      <h2>Your Details</h2>
+      
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="E.g. Olivia Rodrigo">
+      
+      <label for="job">Target Job Title</label>
+      <input type="text" id="job" placeholder="E.g. Senior Frontend Developer">
+      
+      <label for="skills">Key Skills (Comma separated)</label>
+      <textarea id="skills" placeholder="JavaScript, React, Node.js..."></textarea>
+      
+      <label for="education">Education</label>
+      <textarea id="education" placeholder="University of Example, BSC Computer Science..."></textarea>
+      
+      <label for="experience">Professional Experience</label>
+      <textarea id="experience" placeholder="Company XYZ - Software Engineer (2020 - Present)..."></textarea>
+      
+      <label for="photo">Profile Photo</label>
+      <input type="file" id="photo" accept="image/*">
+      
+      <label for="template">Resume Theme Layout</label>
+      <select id="template" onchange="changeTemplate(this.value)">
+        <option value="template1">Gold Accent (Modern)</option>
+        <option value="template2">Slate Accent (Minimal)</option>
+        <option value="template3">Side Strip (Professional)</option>
+      </select>
 
-<!-- LEFT PANEL -->
+      <button onclick="generateResume()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Generate Preview
+      </button>
 
-<div class="form-panel">
+      <button class="btn-secondary" onclick="downloadPDF()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF
+      </button>
 
-<h2>Your Details</h2>
+    </div>
 
-<input id="name" placeholder="Full Name">
+    <!-- RIGHT PANEL: PREVIEW -->
+    <div class="preview-panel">
+      
+      <div class="preview-section-inner" style="width:100%; max-width: 800px;">
+        <h2>Resume Preview</h2>
+        
+        <div id="resumePreview" class="template1">
+          <img id="profileImage" class="profile" style="display: none;" alt="Profile Picture">
+          
+          <h1 id="pname">Your Name</h1>
+          <p id="pjob" class="job-title">Job Title</p>
+          
+          <h3>Skills</h3>
+          <p id="pskills">Your skills will appear here...</p>
+          
+          <h3>Education</h3>
+          <p id="peducation">Your education details will appear here...</p>
+          
+          <h3>Experience</h3>
+          <p id="pexperience">Your experience will appear here...</p>
+        </div>
+      </div>
+      
+    </div>
 
-<input id="job" placeholder="Job Title">
+  </div>
 
-<textarea id="skills" placeholder="Skills"></textarea>
+  <footer class="site-footer">
+    <div class="footer-content">
+      <strong>Why choose our Premium AI Resume Builder?</strong><br>
+      In today's competitive job market, an average resume gets lost in the pile. Our AI-driven tool crafts tailored, high-impact professional stories that highlight your true potential, helping you bypass automated screening systems and grab the recruiter's attention instantly. Build a VIP resume that truly reflects your skills and ambition.
+    </div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <span class="separator">|</span>
+      <a href="#">Terms and Conditions</a>
+    </div>
+    <div class="footer-copy">
+      &copy; 2026 Premium AI Resume Builder. All rights reserved.
+    </div>
+  </footer>
 
-<textarea id="education" placeholder="Education"></textarea>
+  <!-- Paywall Modal -->
+  <div class="modal-overlay" id="paywallModal">
+    <div class="modal-content">
+      <h2>Premium Plan Required</h2>
+      <p>You've used your 1 free AI Resume generation. Upgrade to Premium for unlimited generations, instant downloads, and VIP support.</p>
+      <div class="price-tag">$4.99 <span style="font-size: 1rem; color: #94a3b8;">/ lifetime</span></div>
+      <button id="payButton" onclick="processPayment()">
+        Unlock Unlimited Resumes
+      </button>
+      <button class="btn-secondary" onclick="closeModal()" style="margin-top: 15px;">
+        Maybe Later
+      </button>
+    </div>
+  </div>
 
-<textarea id="experience" placeholder="Experience"></textarea>
+  <script src="script.js"></script>
+  
+  <script>
+    if (document.getElementById("welcomeText")) {
+      document.getElementById("welcomeText").innerText = "Welcome, " + localStorage.getItem("username");
+    }
 
-<label>Profile Photo</label>
-<input type="file" id="photo" accept="image/*">
+    // Cursor Movement Effect
+    const cursorGlow = document.createElement('div');
+    cursorGlow.classList.add('cursor-glow');
+    document.body.appendChild(cursorGlow);
 
-<label>Choose Template</label>
+    document.addEventListener('mousemove', (e) => {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+    });
 
-<select id="template">
-<option value="template1">Modern</option>
-<option value="template2">Minimal</option>
-<option value="template3">Professional</option>
-</select>
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      window.location.href = "auth.html";
+    }
 
-<button onclick="generateResume()">Generate Resume</button>
+    // Enhance preview image hiding logic and layout switching
+    if (document.getElementById('photo')) {
+      document.getElementById('photo').addEventListener('change', function(e) {
+        if(e.target.files.length > 0) {
+          document.getElementById('profileImage').style.display = 'block';
+        }
+      });
+    }
 
-<button onclick="downloadPDF()">Download PDF</button>
-
-</div>
-
-
-<!-- RESUME PREVIEW -->
-
-<div class="preview-panel">
-
-<div id="resumePreview" class="template1">
-
-<img id="profileImage" class="profile">
-
-<h1 id="pname">Your Name</h1>
-
-<p id="pjob">Job Title</p>
-
-<h3>Skills</h3>
-<p id="pskills"></p>
-
-<h3>Education</h3>
-<p id="peducation"></p>
-
-<h3>Experience</h3>
-<p id="pexperience"></p>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
+    function changeTemplate(val) {
+      const preview = document.getElementById('resumePreview');
+      preview.className = val;
+    }
+  </script>
 
 </body>
-
 </html>

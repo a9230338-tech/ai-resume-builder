@@ -1,145 +1,93 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>AI Resume Builder</title>
-
-<style>
-
-body{
-font-family: Arial;
-background:#f5f6fa;
-margin:0;
-padding:0;
-}
-
-header{
-background:#2f3640;
-color:white;
-padding:20px;
-text-align:center;
-}
-
-.container{
-display:flex;
-gap:40px;
-padding:40px;
-}
-
-.form-section{
-width:40%;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-.preview-section{
-width:60%;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-input, textarea{
-width:100%;
-padding:10px;
-margin:10px 0;
-border:1px solid #ccc;
-border-radius:5px;
-}
-
-button{
-background:#4078ff;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-background:#305fcc;
-}
-
-#resumePreview{
-white-space:pre-line;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium AI Resume Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Small overrides if needed, but we mostly use style.css now to unify design */
+    #resumePreview {
+        white-space: pre-line;
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
-<h1>AI Resume Builder</h1>
-<p>Create professional resumes in seconds</p>
-</header>
+  <header>
+    <h1>AI Dashboard</h1>
+    <p>Premium Resume Generator Using AI</p>
+  </header>
 
-<div class="container">
+  <div class="container main-container">
+    
+    <div class="form-section form-panel">
+      <h2>Enter Your Details</h2>
 
-<div class="form-section">
+      <label for="name">Full Name</label>
+      <input id="name" type="text" placeholder="John Doe">
+      
+      <label for="job">Target Job</label>
+      <input id="job" type="text" placeholder="Software Engineer">
+      
+      <label for="skills">Skills</label>
+      <textarea id="skills" placeholder="List your key skills"></textarea>
+      
+      <label for="education">Education</label>
+      <textarea id="education" placeholder="Your educational background"></textarea>
+      
+      <label for="experience">Experience</label>
+      <textarea id="experience" placeholder="Past work experience"></textarea>
+      
+      <button onclick="generateResume()">
+        ✨ Auto-Generate Resume
+      </button>
 
-<h2>Enter Your Details</h2>
+    </div>
 
-<input id="name" placeholder="Full Name">
+    <div class="preview-section preview-panel">
+      <div class="preview-section-inner" style="width:100%; max-width:800px;">
+        <h2>AI Draft Output</h2>
+        <div id="resumePreview" class="template1" style="color: #475569;">
+          Your AI-generated text will appear here...
+        </div>
+      </div>
+    </div>
 
-<input id="job" placeholder="Target Job">
+  </div>
 
-<textarea id="skills" placeholder="Skills"></textarea>
+  <script>
+    async function generateResume(){
+      const data={
+        name:document.getElementById("name").value,
+        skills:document.getElementById("skills").value,
+        education:document.getElementById("education").value,
+        experience:document.getElementById("experience").value,
+        job:document.getElementById("job").value
+      }
 
-<textarea id="education" placeholder="Education"></textarea>
+      // Add loading state
+      document.getElementById("resumePreview").innerText = "Generating your perfect resume with AI...";
+      
+      try {
+        const res=await fetch("http://localhost:3000/generate-resume",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(data)
+        })
 
-<textarea id="experience" placeholder="Experience"></textarea>
+        if (!res.ok) throw new Error("Request failed");
 
-<button onclick="generateResume()">Generate Resume</button>
-
-</div>
-
-<div class="preview-section">
-
-<h2>Resume Preview</h2>
-
-<div id="resumePreview">
-Your resume will appear here...
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-async function generateResume(){
-
-const data={
-name:document.getElementById("name").value,
-skills:document.getElementById("skills").value,
-education:document.getElementById("education").value,
-experience:document.getElementById("experience").value,
-job:document.getElementById("job").value
-}
-
-const res=await fetch("http://localhost:3000/generate-resume",{
-
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify(data)
-
-})
-
-const result=await res.json()
-
-document.getElementById("resumePreview").innerText=result.resume
-
-}
-
-</script>
+        const result=await res.json()
+        const formatted = `${result.name}\n${result.job}\n\nSUMMARY\n${result.summary}\n\nSKILLS\n${result.skills}\n\nEDUCATION\n${result.education}\n\nEXPERIENCE\n${result.experience}`;
+        document.getElementById("resumePreview").innerText=formatted;
+      } catch (err) {
+        document.getElementById("resumePreview").innerText = "AI Generation Failed. Please ensure the backend is running at localhost:3000.";
+      }
+    }
+  </script>
 
 </body>
-
 </html>
